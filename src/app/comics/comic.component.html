@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Comics</h4>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Titulo</th>
+                <th>Description</th>
+                <th>Final de año</th>
+                
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of comicsArr">
+                <td>{{ item.id}}</td>
+                <td>
+                  <strong>
+                    {{ item.title}}
+                  </strong>
+                </td>
+                <td [class.text-danger]="!item.description">{{ item.description  |  shorten: 30 }}</td>
+                <td>{{ item.endYear}}</td>
+                
+                
+                <!-- <td>{{ item.data.amount  | currency }}</td>
+                <td [class.text-success]="item.data.type == 'income'" 
+                    [class.text-danger]="item.data.type == 'egress'"
+                >{{ item.data.type  | uppercase  }}</td>
+                <td>
+                  <button type="button" class="btn btn-danger" (click)="delete(item.uid)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td> -->
+                
+              </tr>
+            </tbody>
+
+          </table>
+
+
+        </div>
+      </div>
+  </div>
+</div>
