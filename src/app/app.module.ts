@@ -43,7 +43,7 @@ import { FavsComponent } from './favs/favs.component';
     SidebarComponent,
     OrderIncomePipe,
     ShortenPipe,
-    FavsComponent
+    FavsComponent,
   ],
   imports: [
     BrowserModule,

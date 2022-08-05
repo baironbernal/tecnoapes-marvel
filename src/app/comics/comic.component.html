@@ -4,6 +4,12 @@
         <div class="card-body">
           <h4 class="card-title">Comics</h4>
 
+          <form>
+            <input  class="form-control" type="text" placeholder="Buscar comic" [formControl]="search">
+          </form>
+
+          <br>
+
           <table class="table">
             <thead>
               <tr>
@@ -26,18 +32,17 @@
                 </td>
                 <td [class.text-danger]="!item.description">{{ item.description  |  shorten: 30 }}</td>
                 <td>{{ item.endYear}}</td>
-                
-                
-                <!-- <td>{{ item.data.amount  | currency }}</td>
-                <td [class.text-success]="item.data.type == 'income'" 
-                    [class.text-danger]="item.data.type == 'egress'"
-                >{{ item.data.type  | uppercase  }}</td>
                 <td>
-                  <button type="button" class="btn btn-danger" (click)="delete(item.uid)">
-                    <i class="fa fa-trash"></i>
+                  <button type="button" class="btn btn-success" disabled>
+                    <i class="fa fa-star"></i>
                   </button>
-                </td> -->
-                
+                </td>
+
+                <td>
+                  <button type="button" class="btn btn-light" (click)="addFavorites(item.id)" >
+                    <i class="fa fa-star"></i>
+                  </button>
+                </td>
               </tr>
             </tbody>
 

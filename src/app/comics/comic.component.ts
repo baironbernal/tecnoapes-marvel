@@ -4,7 +4,9 @@ import { Store } from '@ngrx/store';
 import { ComicService } from '../services/comic.service';
 import { AppState } from '../app.reducer';
 
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-heroes',
@@ -14,29 +16,58 @@ import { Subscription } from 'rxjs';
 export class ComicComponent implements OnInit, OnDestroy {
   
   comicsArr: any[];
+  search = new FormControl('');
   loading: boolean = false; 
   uiSuscription: Subscription;
   comicSuscritption: Subscription;
   comicRedxSus: Subscription;
 
-  constructor(private comicService: ComicService, private store: Store<AppState>) { }
+  constructor(private comicService: ComicService, 
+    private store: Store<AppState>) { 
+      
+    }
 
   ngOnInit(): void {
-    
+
+    this.search.valueChanges.pipe(
+      map(search => search.charAt(0).toUpperCase()),
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(search => this.searchComic(search)),
+      
+    ).subscribe()
     
     this.uiSuscription = this.store.select('ui').subscribe(ui => this.loading = ui.isLoading);
 
     this.comicSuscritption = this.comicService.allComics();
-
-    this.comicRedxSus = this.store.select('comic').subscribe(({items}) => this.comicsArr = items)
-      
   
+    this.suscribeRdxToComics();
+    
+  }
+  
+
+  suscribeRdxToComics() {
+    this.comicRedxSus = this.store.select('comic').subscribe(({items}) => this.comicsArr = items)
+  }
+
+  searchComic(valueToSearch: string) {
+    if (!valueToSearch) {
+      this.suscribeRdxToComics();
+    }
+    return this.comicsArr = this.comicsArr.filter(
+      items => items.title.includes(valueToSearch)
+    ) 
+    
   }
   
   ngOnDestroy(): void {
     this.uiSuscription.unsubscribe()
     this.comicSuscritption.unsubscribe()
     this.comicRedxSus.unsubscribe()
+  }
+
+  addFavorites(idApi: number) {
+    this.comicService.addFav(idApi);
   }
 
   save() {
