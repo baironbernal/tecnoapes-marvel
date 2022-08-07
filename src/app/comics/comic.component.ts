@@ -40,6 +40,7 @@ export class ComicComponent implements OnInit, OnDestroy {
     this.uiSuscription = this.store.select('ui').subscribe(ui => this.loading = ui.isLoading);
 
     this.comicSuscritption = this.comicService.allComics();
+    this.comicService.allFavs().subscribe(info=> console.log(info));
   
     this.suscribeRdxToComics();
     

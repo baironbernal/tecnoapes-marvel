@@ -16,5 +16,5 @@ export const appReducers: ActionReducerMap<AppState> = {
    ui: ui.uiReducer,
    auth: auth.authReducer,
    comic: comic.comicReducer,
-   fav: comicFav.comicReducer,
+   fav: comicFav.comicFavReducer
 }

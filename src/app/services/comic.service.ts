@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
 import { setItems, setComicsFavs } from '../comics/comic.actions';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,27 +27,42 @@ export class ComicService {
   }
 
   addFav(idApi: number) {
-    console.log(idApi)
-    const comicById = this.http.get(this.domain + 'comics/'+idApi+'?ts=1&apikey='+ this.apikey +'&hash=' + this.hash).subscribe(
+    
+    this.http.get(this.domain + 'comics/'+idApi+'?ts=1&apikey='+ this.apikey +'&hash=' + this.hash).subscribe(
       (data) => {
         if(!data) { return; }
         
-        this.store.dispatch(setComicsFavs({ items: data['data']['results'] }))
+        const dataArr = data['data']['results'];
+        this.store.dispatch(setComicsFavs({ items: dataArr }))
+        this.firestore.doc(this.authService.user.uid + '/comics')
+        .collection('favs')
+        .add({ items: dataArr} )
       }
-    )
-
-
-    return this.firestore.doc(this.authService.user.uid + '/comics')
-                  .collection('favs')
-                  //.add( idApi )
+    )   
   }
+
+  allFavs() {
+
+    return this.firestore.collection(this.authService.user.uid   + '/comics/favs')
+    .snapshotChanges()
+    .pipe(
+      map( snapshot => {
+        return snapshot.map(doc => {
+          return {
+            uid: doc.payload.doc.id,
+            data: doc.payload.doc.data()
+          }
+        });
+      })
+    );
+  }
+
 
 
   allComics():any {
     return this.http.get(this.URL).subscribe(
       (data) => {
         if(!data) { return; }
-        console.log(data['data']['results'])
         this.store.dispatch(setItems({ items: data['data']['results'] }))
       }
     )

@@ -12,9 +12,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styles: [
-  ]
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit , OnDestroy {
   

@@ -1,6 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { Comic } from '../models/comic.model';
-import { setItems, unSetItems } from './comic.actions';
+import { setComicsFavs, unSetComicsFavs } from './comic.actions';
 
 export interface State {
     items: any; 
@@ -10,15 +9,14 @@ export const initialState: State = {
    items: [],
 }
 
-const _comicReducer = createReducer(initialState,
+const _comicFavReducer = createReducer(initialState,
 
-    on(setItems, (state, { items }) => ({ ...state, items: [...items]})),
-    on(unSetItems, state => ({ ...state, items: []})),
+  
 
-    
-
+    on(setComicsFavs, (state, { items }) => ({ ...state, items: [...state.items, ...items]})),
+    on(unSetComicsFavs, state => ({ ...state, items: []})),
 );
 
-export function comicReducer(state, action) {
-    return _comicReducer(state, action);
+export function comicFavReducer(state, action) {
+    return _comicFavReducer(state, action);
 }
