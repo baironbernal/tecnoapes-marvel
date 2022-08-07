@@ -27,6 +27,7 @@ import { ComicComponent } from './comics/comic.component';
 
 import { HttpClientModule } from '@angular/common/http';
 import { ShortenPipe } from './pipes/shorten.pipe';
+import { FavsComponent } from './favs/favs.component';
 
 
 
@@ -42,6 +43,7 @@ import { ShortenPipe } from './pipes/shorten.pipe';
     SidebarComponent,
     OrderIncomePipe,
     ShortenPipe,
+    FavsComponent,
   ],
   imports: [
     BrowserModule,

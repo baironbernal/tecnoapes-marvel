@@ -7,6 +7,9 @@ import { AppState } from '../app.reducer';
 import { Subscription, tap } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { stopLoading } from '../shared/ui.actions';
 
 @Component({
   selector: 'app-heroes',
@@ -14,6 +17,7 @@ import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators'
   styles: []
 })
 export class ComicComponent implements OnInit, OnDestroy {
+  
   
   comicsArr: any[];
   search = new FormControl('');
@@ -23,14 +27,13 @@ export class ComicComponent implements OnInit, OnDestroy {
   comicRedxSus: Subscription;
 
   constructor(private comicService: ComicService, 
-    private store: Store<AppState>) { 
+    private store: Store<AppState>,private router: Router) { 
       
     }
 
   ngOnInit(): void {
 
     this.search.valueChanges.pipe(
-      map(search => search.charAt(0).toUpperCase()),
       debounceTime(300),
       distinctUntilChanged(),
       tap(search => this.searchComic(search)),
@@ -38,21 +41,21 @@ export class ComicComponent implements OnInit, OnDestroy {
     ).subscribe()
     
     this.uiSuscription = this.store.select('ui').subscribe(ui => this.loading = ui.isLoading);
-
     this.comicSuscritption = this.comicService.allComics();
-    this.comicService.allFavs().subscribe(info=> console.log(info));
-  
     this.suscribeRdxToComics();
-    
   }
   
 
   suscribeRdxToComics() {
-    this.comicRedxSus = this.store.select('comic').subscribe(({items}) => this.comicsArr = items)
+    this.comicRedxSus = this.store.select('comic').subscribe(({items}) => {
+      this.comicsArr = items
+    })
+    
+    
   }
 
   searchComic(valueToSearch: string) {
-    if (!valueToSearch) {
+    if (valueToSearch === null && valueToSearch === undefined) {
       this.suscribeRdxToComics();
     }
     return this.comicsArr = this.comicsArr.filter(
@@ -68,25 +71,14 @@ export class ComicComponent implements OnInit, OnDestroy {
   }
 
   addFavorites(idApi: number) {
-    this.comicService.addFav(idApi);
-  }
+    if(this.comicService.addFav(idApi)){
+      Swal.fire('Agregado a favoritos', 'sucesss', 'success')
+      this.router.navigate(['/favs'])
+    }
+    else{
 
-  save() {
-
-    // if(this.incomeForm.invalid) {return;}
-
-    // this.store.dispatch(isLoading())
-
-    // const { description, amount }  = this.incomeForm.value;
-
-    // const incomeEgress = new Comic(description, amount, this.type)
+    }
     
-    // this.ieService.create(incomeEgress)
-    //           .then( ()  => { 
-    //             this.store.dispatch(stopLoading())
-    //               Swal.fire('Registro creado', description, 'success')
-    //            })
-    //           .catch( err => Swal.fire('Error', err.message, 'error') )
   }
 
 }

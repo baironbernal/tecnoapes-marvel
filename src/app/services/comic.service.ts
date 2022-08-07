@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
-})
+}) 
 export class ComicService {
   domain: string;
   URL: string;
@@ -28,13 +28,13 @@ export class ComicService {
 
   addFav(idApi: number) {
     
-    this.http.get(this.domain + 'comics/'+idApi+'?ts=1&apikey='+ this.apikey +'&hash=' + this.hash).subscribe(
+   return this.http.get(this.domain + 'comics/'+idApi+'?ts=1&apikey='+ this.apikey +'&hash=' + this.hash).subscribe(
       (data) => {
         if(!data) { return; }
         
         const dataArr = data['data']['results'];
         this.store.dispatch(setComicsFavs({ items: dataArr }))
-        this.firestore.doc(this.authService.user.uid + '/comics')
+        return this.firestore.doc(this.authService.user.uid + '/comics')
         .collection('favs')
         .add({ items: dataArr} )
       }
@@ -42,14 +42,12 @@ export class ComicService {
   }
 
   allFavs() {
-
     return this.firestore.collection(this.authService.user.uid   + '/comics/favs')
     .snapshotChanges()
     .pipe(
       map( snapshot => {
         return snapshot.map(doc => {
           return {
-            uid: doc.payload.doc.id,
             data: doc.payload.doc.data()
           }
         });
